@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: resume-to-job-matching
+  config:
+    import: "classpath:rubrics.yaml"
+
+typesafe:
+  # Exported by you, never committed. The app starts without it; calls then fail with a 401.
+  api-key: ${TYPESAFE_API_KEY:}
+  base-url: https://api.typesafe.ai
+  model: jev-latest
+  timeout: 30s
+  max-retries: 4
+  initial-backoff: 500ms
+
+matching:
+  # Jev evaluates one state per call, so a candidate pool is one call each. This caps how many
+  # run at once; the account ceiling is 1200 requests/minute across everything.
+  concurrency: 8
+
+logging:
+  level:
+    in.sureshcoder.resumetojobmatching: INFO
+    # Full Jev request and response bodies. Drop to INFO for one-line summaries only.
+    in.sureshcoder.resumetojobmatching.jev.JevClient: DEBUG

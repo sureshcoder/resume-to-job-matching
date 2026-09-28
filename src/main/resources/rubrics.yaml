@@ -1,0 +1,282 @@
+# Hand-authored rubrics, keyed by the industry keys used by data-faker-custom-provider.
+#
+# Each rubric decomposes "is this candidate a fit" into independent dimensions, following the
+# composite-scoring pattern: Jev scores each dimension on its own, and the weights below combine
+# them. Weights must sum to 1.0 per rubric; RubricCatalog fails startup if they do not.
+#
+# Criteria levels are ordered worst to best and the score is a probability-weighted index into
+# them, so levels should describe observable evidence rather than a verdict.
+#
+# A 'noul' question is a gate, not a weighted dimension: it answers a pass/fail requirement and
+# forces GATE_FAILED when it comes back below its minimum.
+matching:
+  default-rubric: generic
+  rubrics:
+
+    generic:
+      display-name: "Generic role"
+      questions:
+        skills_coverage:
+          type: score
+          weight: 0.35
+          instructions: >-
+            How completely do the candidate's skills cover the skills required by the job posting?
+            Judge only the overlap between what the posting asks for and what the candidate
+            demonstrates, not overall strength.
+          levels:
+            - "No overlap with the required skills"
+            - "One required skill, mentioned without supporting detail"
+            - "Some required skills, evidenced in past roles"
+            - "Most required skills, evidenced in past roles"
+            - "All required skills, each backed by concrete responsibilities"
+        experience_depth:
+          type: score
+          weight: 0.25
+          instructions: >-
+            How much relevant experience does the candidate have for a role at the seniority the
+            posting's title implies? Weigh tenure in comparable roles, not total time working.
+          levels:
+            - "No experience relevant to this posting"
+            - "Under a year of loosely relevant experience"
+            - "A few years of relevant experience"
+            - "Substantial relevant experience at or near this level"
+            - "Deep experience beyond the level this posting asks for"
+        role_relevance:
+          type: score
+          weight: 0.25
+          instructions: >-
+            How closely do the candidate's past job titles, functional areas and responsibilities
+            match the work this posting describes?
+          levels:
+            - "Entirely different field of work"
+            - "Adjacent field, little overlapping day-to-day work"
+            - "Related work with meaningful overlap"
+            - "Closely comparable roles and responsibilities"
+            - "Has done precisely this job before"
+        education_fit:
+          type: score
+          weight: 0.15
+          instructions: >-
+            How well do the candidate's qualifications and specialisations align with what this
+            role needs? A strong track record can substitute for a directly matching degree.
+          levels:
+            - "Unrelated field of study and no compensating experience"
+            - "Unrelated study, some compensating experience"
+            - "Broadly relevant qualification"
+            - "Directly relevant qualification or specialisation"
+            - "Directly relevant advanced qualification plus supporting certifications"
+      # Remote postings should never be filtered out on geography, which is why this is phrased
+      # around the posting's own location rather than distance.
+        location_compatible:
+          type: noul
+          minimum: 0.5
+          instructions: >-
+            The candidate could work this posting's location: the posting is remote, or the
+            candidate's city and state are plausibly commutable to the posting's location.
+          options:
+            "true": "The posting is remote, or the locations are compatible"
+            "false": "The posting requires onsite presence somewhere the candidate is not located"
+
+    technology_information_and_media:
+      display-name: "Technology, information and media"
+      questions:
+        skills_coverage:
+          type: score
+          weight: 0.30
+          instructions: >-
+            How completely do the candidate's technical skills cover the skills the posting
+            requires?
+          levels:
+            - "None of the required technologies appear"
+            - "One required technology, named but not evidenced"
+            - "Some required technologies, used in real projects"
+            - "Most required technologies, used substantially"
+            - "All required technologies, with evidence of depth in each"
+        technical_depth:
+          type: score
+          weight: 0.25
+          instructions: >-
+            How much depth does the candidate show in their primary technical specialty, judging by
+            the substance of their responsibilities rather than the number of tools listed?
+          levels:
+            - "No hands-on technical work described"
+            - "Routine implementation work only"
+            - "Owned meaningful features end to end"
+            - "Led technically demanding work others depended on"
+            - "Deep expertise: architecture, performance, or tooling others build on"
+        role_relevance:
+          type: score
+          weight: 0.20
+          instructions: >-
+            How closely do the candidate's previous engineering roles match the work described in
+            the posting?
+          levels:
+            - "Entirely different field of work"
+            - "Technical, but a different discipline"
+            - "Related discipline with overlapping work"
+            - "Closely comparable engineering role"
+            - "Has held this exact role"
+        system_scale:
+          type: score
+          weight: 0.15
+          instructions: >-
+            What scale of system has the candidate worked on, judged by the scope of ownership
+            their responsibilities describe?
+          levels:
+            - "No systems work mentioned"
+            - "Contributed to a component someone else owned"
+            - "Owned a component of a larger system"
+            - "Owned the design of a significant system"
+            - "Designed systems spanning multiple teams or domains"
+        education_fit:
+          type: score
+          weight: 0.10
+          instructions: >-
+            How relevant are the candidate's qualifications to this technical role? Demonstrated
+            engineering work can substitute for a matching degree.
+          levels:
+            - "Unrelated study and no compensating engineering work"
+            - "Unrelated study, compensating engineering work"
+            - "Broadly technical qualification"
+            - "Directly relevant technical qualification"
+            - "Advanced technical qualification plus relevant certifications"
+        location_compatible:
+          type: noul
+          minimum: 0.5
+          instructions: >-
+            The candidate could work this posting's location: the posting is remote, or the
+            candidate's city and state are plausibly commutable to the posting's location.
+          options:
+            "true": "The posting is remote, or the locations are compatible"
+            "false": "The posting requires onsite presence somewhere the candidate is not located"
+
+    hospitals_and_health_care:
+      display-name: "Hospitals and health care"
+      questions:
+        clinical_skills_coverage:
+          type: score
+          weight: 0.30
+          instructions: >-
+            How completely do the candidate's skills cover the clinical or operational skills this
+            posting requires?
+          levels:
+            - "No overlap with the required skills"
+            - "One required skill, without supporting detail"
+            - "Some required skills, evidenced in practice"
+            - "Most required skills, evidenced in practice"
+            - "All required skills, each backed by concrete responsibilities"
+        credential_strength:
+          type: score
+          weight: 0.25
+          instructions: >-
+            How strong and current are the candidate's certifications and licences for this role?
+            Healthcare roles depend on credentials in a way most fields do not.
+          levels:
+            - "No certifications listed"
+            - "A certification, but not relevant to this posting"
+            - "A relevant certification"
+            - "Multiple relevant certifications, recently issued"
+            - "Comprehensive, current credentials exceeding the posting's needs"
+        role_relevance:
+          type: score
+          weight: 0.25
+          instructions: >-
+            How closely does the candidate's care-setting and responsibilities match the work this
+            posting describes?
+          levels:
+            - "Entirely different field of work"
+            - "Healthcare adjacent, non-clinical"
+            - "Related care setting"
+            - "Closely comparable care setting and duties"
+            - "Has held this exact role in a comparable setting"
+        education_fit:
+          type: score
+          weight: 0.20
+          instructions: >-
+            How well does the candidate's clinical or health-related education match this role?
+          levels:
+            - "Unrelated field of study"
+            - "Health adjacent study without clinical grounding"
+            - "Relevant health qualification"
+            - "Directly relevant clinical qualification"
+            - "Advanced clinical qualification with matching specialisation"
+        location_compatible:
+          type: noul
+          minimum: 0.5
+          instructions: >-
+            The candidate could work this posting's location: the posting is remote, or the
+            candidate's city and state are plausibly commutable to the posting's location.
+          options:
+            "true": "The posting is remote, or the locations are compatible"
+            "false": "The posting requires onsite presence somewhere the candidate is not located"
+
+    financial_services:
+      display-name: "Financial services"
+      questions:
+        domain_skills_coverage:
+          type: score
+          weight: 0.30
+          instructions: >-
+            How completely do the candidate's skills cover the financial skills this posting
+            requires?
+          levels:
+            - "No overlap with the required skills"
+            - "One required skill, without supporting detail"
+            - "Some required skills, evidenced in past roles"
+            - "Most required skills, evidenced in past roles"
+            - "All required skills, each backed by concrete responsibilities"
+        role_relevance:
+          type: score
+          weight: 0.25
+          instructions: >-
+            How closely do the candidate's previous financial roles match the work this posting
+            describes?
+          levels:
+            - "Entirely different field of work"
+            - "Business adjacent, outside financial services"
+            - "Related financial function"
+            - "Closely comparable financial role"
+            - "Has held this exact role"
+        regulatory_exposure:
+          type: score
+          weight: 0.20
+          instructions: >-
+            How much exposure does the candidate show to regulated processes, controls, audit or
+            compliance obligations?
+          levels:
+            - "No regulated work mentioned"
+            - "Worked near regulated processes without owning them"
+            - "Followed defined controls as part of the role"
+            - "Owned compliance or control processes"
+            - "Led regulatory or audit work across functions"
+        education_fit:
+          type: score
+          weight: 0.15
+          instructions: >-
+            How well do the candidate's qualifications align with this financial role?
+          levels:
+            - "Unrelated field of study"
+            - "Unrelated study, compensating financial experience"
+            - "Broadly relevant business qualification"
+            - "Directly relevant finance qualification"
+            - "Advanced finance qualification with matching specialisation"
+        certification_fit:
+          type: score
+          weight: 0.10
+          instructions: >-
+            How relevant are the candidate's professional certifications to this posting?
+          levels:
+            - "No certifications listed"
+            - "Certifications unrelated to this posting"
+            - "One relevant certification"
+            - "Multiple relevant certifications"
+            - "Comprehensive, current certifications for this specialism"
+        location_compatible:
+          type: noul
+          minimum: 0.5
+          instructions: >-
+            The candidate could work this posting's location: the posting is remote, or the
+            candidate's city and state are plausibly commutable to the posting's location.
+          options:
+            "true": "The posting is remote, or the locations are compatible"
+            "false": "The posting requires onsite presence somewhere the candidate is not located"
